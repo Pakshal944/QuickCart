@@ -1,9 +1,10 @@
 "use client"
 import React from "react";
-import { assets} from "@/assets/assets";
+import { assets } from "@/assets/assets";
 import Link from "next/link"
 import { useAppContext } from "@/context/AppContext";
 import Image from "next/image";
+import { SignedIn, SignedOut, UserButton, SignInButton } from "@clerk/nextjs";
 
 const Navbar = () => {
 
@@ -37,18 +38,48 @@ const Navbar = () => {
 
       <ul className="hidden md:flex items-center gap-4 ">
         <Image className="w-4 h-4" src={assets.search_icon} alt="search icon" />
-        <button className="flex items-center gap-2 hover:text-gray-900 transition">
-          <Image src={assets.user_icon} alt="user icon" />
-          Account
-        </button>
+        <SignedOut>
+          <SignInButton mode="modal">
+            <button className="flex items-center gap-2 hover:text-gray-900 transition">
+              <Image src={assets.user_icon} alt="user icon" />
+              Account
+            </button>
+          </SignInButton>
+        </SignedOut>
+        <SignedIn>
+          <UserButton afterSignOutUrl="/">
+            <UserButton.MenuItems>
+              <UserButton.Link href="/" label="Home" labelIcon={<span>🏠</span>} />
+              <UserButton.Link href="/all-products" label="Products" labelIcon={<span>🛍️</span>} />
+              <UserButton.Link href="/cart" label="Cart" labelIcon={<span>🛒</span>} />
+              <UserButton.Link href="/my-orders" label="My Orders" labelIcon={<span>📦</span>} />
+            </UserButton.MenuItems>
+          </UserButton>
+        </SignedIn>
       </ul>
 
       <div className="flex items-center md:hidden gap-3">
         {isSeller && <button onClick={() => router.push('/seller')} className="text-xs border px-4 py-1.5 rounded-full">Seller Dashboard</button>}
-        <button className="flex items-center gap-2 hover:text-gray-900 transition">
-          <Image src={assets.user_icon} alt="user icon" />
-          Account
-        </button>
+        <Link href="/" className="text-xs border px-4 py-1.5 rounded-full">Home</Link>
+        <Link href="/all-products" className="text-xs border px-4 py-1.5 rounded-full">Products</Link>
+        <SignedOut>
+          <SignInButton mode="modal">
+            <button className="flex items-center gap-2 hover:text-gray-900 transition">
+              <Image src={assets.user_icon} alt="user icon" />
+              Account
+            </button>
+          </SignInButton>
+        </SignedOut>
+        <SignedIn>
+          <UserButton afterSignOutUrl="/">
+            <UserButton.MenuItems>
+              <UserButton.Link href="/" label="Home" labelIcon={<span>🏠</span>} />
+              <UserButton.Link href="/all-products" label="Products" labelIcon={<span>🛍️</span>} />
+              <UserButton.Link href="/cart" label="Cart" labelIcon={<span>🛒</span>} />
+              <UserButton.Link href="/my-orders" label="My Orders" labelIcon={<span>📦</span>} />
+            </UserButton.MenuItems>
+          </UserButton>
+        </SignedIn>
       </div>
     </nav>
   );
