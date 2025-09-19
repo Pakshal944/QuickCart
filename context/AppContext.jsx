@@ -15,7 +15,15 @@ export const AppContextProvider = (props) => {
     const currency = process.env.NEXT_PUBLIC_CURRENCY
     const router = useRouter()
 
-    const {user} = useUser()
+    // Check if Clerk is available before using useUser
+    let user = null;
+    try {
+        const clerkUser = useUser();
+        user = clerkUser?.user || null;
+    } catch (error) {
+        // Clerk not available, user will be null
+        user = null;
+    }
 
     const [products, setProducts] = useState([])
     const [userData, setUserData] = useState(false)

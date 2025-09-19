@@ -12,16 +12,32 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
-  return (
-    <ClerkProvider>
-      <html lang="en">
-        <body className={`${outfit.className} antialiased text-gray-700`} >
-          <Toaster />
-          <AppContextProvider>
-            {children}
-          </AppContextProvider>
-        </body>
-      </html>
-      </ClerkProvider>
+  // Check if Clerk environment variables are properly set
+  const clerkPublishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+  const isClerkConfigured = clerkPublishableKey && 
+    clerkPublishableKey !== 'your_clerk_publishable_key_here' && 
+    clerkPublishableKey.length > 10;
+
+  const content = (
+    <html lang="en">
+      <body className={`${outfit.className} antialiased text-gray-700`} >
+        <Toaster />
+        <AppContextProvider>
+          {children}
+        </AppContextProvider>
+      </body>
+    </html>
   );
+
+  // Only wrap with ClerkProvider if properly configured
+  if (isClerkConfigured) {
+    return (
+      <ClerkProvider publishableKey={clerkPublishableKey}>
+        {content}
+      </ClerkProvider>
+    );
+  }
+
+  // Return without ClerkProvider for builds without proper keys
+  return content;
 }
